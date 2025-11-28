@@ -4,13 +4,13 @@ import ToDoList from './ToDoList';
 import './index.css';
 
 function App() {
-  // ←←← ЭТО ИМЕННО КАК В МЕТОДИЧКЕ НА СТР. 9 ←←←
+  
   const [tasks, setTasks] = useState(() => {
     const saved = localStorage.getItem('tasks');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // ←←← ЭТО ТОЖЕ ИМЕННО КАК В МЕТОДИЧКЕ ←←←
+  
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
