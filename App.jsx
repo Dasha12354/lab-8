@@ -4,40 +4,28 @@ import ToDoList from './ToDoList';
 import './index.css';
 
 function App() {
-  // Главное состояние — массив задач
-  const [tasks, setTasks] = useState([]);
+  // ←←← ЭТО ИМЕННО КАК В МЕТОДИЧКЕ НА СТР. 9 ←←←
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem('tasks');
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  // ← ЭТО ГЛАВНОЕ: загружаем задачи из localStorage при старте
+  // ←←← ЭТО ТОЖЕ ИМЕННО КАК В МЕТОДИЧКЕ ←←←
   useEffect(() => {
-    const savedTasks = localStorage.getItem('laba8-todo');
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
-  }, []); // [] = только один раз при загрузке страницы
-
-  // ← ЭТО сохраняет задачи каждый раз, когда они меняются
-  useEffect(() => {
-    localStorage.setItem('laba8-todo', JSON.stringify(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
-  // Добавление задачи
   const addTask = (text) => {
     if (text.trim() === '') return;
-    const newTask = {
-      id: Date.now(),
-      text: text.trim()
-    };
-    setTasks([...tasks, newTask]);
+    setTasks([...tasks, { id: Date.now(), text: text.trim() }]);
   };
 
-  // Удаление задачи
   const removeTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
-  // Очистить всё
   const clearAll = () => {
-    if (confirm('Удалить все задачи?')) {
+    if (confirm('Очистить все задачи?')) {
       setTasks([]);
     }
   };
@@ -45,11 +33,8 @@ function App() {
   return (
     <div className="app">
       <h1>Мои задачи</h1>
-      
       <AddTaskForm addTask={addTask} />
-      
       <ToDoList tasks={tasks} removeTask={removeTask} />
-
       {tasks.length > 0 && (
         <button className="clear-all" onClick={clearAll}>
           Очистить всё
