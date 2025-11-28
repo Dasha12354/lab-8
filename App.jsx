@@ -1,30 +1,28 @@
 import { useState, useEffect } from 'react';
 import AddTaskForm from './AddTaskForm';
 import ToDoList from './ToDoList';
-import './index.css'; // подключаем стили
+import './index.css';
 
 function App() {
+  // Это наше состояние — массив задач
   const [tasks, setTasks] = useState([]);
 
-  // Загружаем задачи из localStorage при старте
+  // 1. При загрузке страницы — достаём задачи из браузера
   useEffect(() => {
-    const saved = localStorage.getItem('todo-tasks');
-    if (saved) {
-      setTasks(JSON.parse(saved));
+    const savedTasks = localStorage.getItem('my-todo-tasks');
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
     }
-  }, []);
+  }, []);   // пустой массив = выполнится только один раз при старте
 
-  // Сохраняем в localStorage при любом изменении tasks
+  // 2. Каждый раз, когда tasks меняется — сохраняем в браузер
   useEffect(() => {
-    localStorage.setItem('todo-tasks', JSON.stringify(tasks));
+    localStorage.setItem('my-todo-tasks', JSON.stringify(tasks));
   }, [tasks]);
 
   const addTask = (text) => {
-    if (text.trim() === '') return;
-    const newTask = {
-      id: Date.now(),
-      text: text.trim()
-    };
+    if (!text.trim()) return;
+    const newTask = { id: Date.now(), text: text.trim() };
     setTasks([...tasks, newTask]);
   };
 
@@ -39,7 +37,9 @@ function App() {
   return (
     <div className="app">
       <h1>Мои задачи</h1>
+      
       <AddTaskForm addTask={addTask} />
+      
       <ToDoList tasks={tasks} removeTask={removeTask} />
       
       {tasks.length > 0 && (
